@@ -88,6 +88,20 @@ BETTER_AUTH_SECRET=$(openssl rand -hex 32) \
 
 PostgreSQL data persists in a named Docker volume (`pgdata`). Paperclip data persists in `paperclip-data`.
 
+## Railway
+
+Railway does not accept Dockerfiles that declare `VOLUME`, so use `Dockerfile.railway` there instead of the default `Dockerfile`.
+
+Set:
+
+```env
+RAILWAY_DOCKERFILE_PATH=Dockerfile.railway
+```
+
+Attach a Railway Volume at `/paperclip`.
+
+The Railway-specific entrypoint proactively repairs `/paperclip` ownership before delegating to the standard Docker entrypoint. This covers the common case where the mounted Railway volume is owned by `root` even when the container keeps the default `node` uid/gid.
+
 ### Untrusted PR review
 
 Isolated container for reviewing untrusted pull requests with Codex or Claude, without exposing your host machine. See `doc/UNTRUSTED-PR-REVIEW.md` for the full workflow.
